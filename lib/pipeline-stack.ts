@@ -216,6 +216,21 @@ export class PipelineStack extends Stack {
         }),
       }
     );
+
+    const allowCDKDeployPolicy = new IAM.Policy(this, "AllowCDKDeploy", {
+      statements: [
+        new IAM.PolicyStatement({
+          actions: ["sts:AssumeRole"],
+          effect: IAM.Effect.ALLOW,
+          resources: [
+            `arn:aws:iam::${Aws.ACCOUNT_ID}:role/cdk-*-${Aws.ACCOUNT_ID}-${Aws.REGION}`,
+          ],
+        }),
+      ],
+    });
+
+    backendProject.role?.attachInlinePolicy(allowCDKDeployPolicy);
+
     const backendRestAPIExports = new CodePipeline.Artifact(
       "DevBackendRestAPIExports"
     );
@@ -271,6 +286,8 @@ export class PipelineStack extends Stack {
         }),
       }
     );
+
+    frontendWebUIProject.role?.attachInlinePolicy(allowCDKDeployPolicy);
 
     deployStage.addAction(
       new CodePipelineActions.CodeBuildAction({

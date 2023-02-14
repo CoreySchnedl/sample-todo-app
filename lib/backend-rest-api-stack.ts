@@ -132,6 +132,7 @@ export class BackendRestAPIStack extends Stack {
     });
 
     const restAPI = new ApiGateway.RestApi(this, "BackendRestApi", {
+      cloudWatchRole: true,
       endpointTypes: [ApiGateway.EndpointType.REGIONAL],
       deployOptions: {
         tracingEnabled: true,
@@ -225,9 +226,16 @@ export class BackendRestAPIStack extends Stack {
 
     const v1Resource = restAPI.root.addResource("v1");
 
-    addLambdaBackedEndpoint({
+    const v1TodosResource = addLambdaBackedEndpoint({
       parentResource: v1Resource,
       resourceName: "todos",
+      methods: ["ANY"],
+      handler: todosLambdaFunction,
+      cognitoAuthorizer,
+    });
+    addLambdaBackedEndpoint({
+      parentResource: v1TodosResource,
+      resourceName: "{id}",
       methods: ["ANY"],
       handler: todosLambdaFunction,
       cognitoAuthorizer,

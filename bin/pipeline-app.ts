@@ -88,3 +88,14 @@ cdknag.NagSuppressions.addResourceSuppressionsByPath(
     },
   ]
 );
+
+cdknag.NagSuppressions.addResourceSuppressionsByPath(
+  pipelineStack,
+  "/PipelineStack/AllowCDKDeploy/Resource",
+  [
+    {
+      id: "AwsSolutions-IAM5",
+      reason: "Resolve before using in a production codebase.",
+    },
+  ]
+);
