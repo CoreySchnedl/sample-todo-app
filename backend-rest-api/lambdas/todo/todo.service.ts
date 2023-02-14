@@ -1,6 +1,10 @@
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 import { SetOptional } from "type-fest";
-import { DDBTodo } from "../../models/DDBModels";
+import {
+  DDBRecordType,
+  DDBTodo,
+  DDBTodoWithoutRecordType,
+} from "../../models/DDBModels";
 import { uuid } from "uuidv4";
 import {
   CreateTodoInput,
@@ -11,13 +15,15 @@ import {
 } from "./types";
 import { TodoPriority } from "@shared/enums";
 
-const TABLE_NAME_TODO = process.env.TABLE_NAME_TODO!;
+const TABLE_NAME_MAIN = process.env.TABLE_NAME_MAIN!;
 
 export interface TodoServiceParams {
   documentClient: DynamoDBDocument;
 }
 
 export class TodoService implements ITodoService {
+  static RECORD_TYPE = DDBRecordType.TODO;
+
   private documentClient: DynamoDBDocument;
 
   constructor(input: TodoServiceParams) {
@@ -29,10 +35,17 @@ export class TodoService implements ITodoService {
 
     return {
       id,
+      recordType: TodoService.RECORD_TYPE,
       name: record.name || "",
       description: record.description || "",
       priority: record.priority || TodoPriority.LOW,
     };
+  }
+
+  private removeRecordType(item: DDBTodo): DDBTodoWithoutRecordType {
+    const { recordType, ...result } = item;
+
+    return result;
   }
 
   private generateId(): string {
@@ -43,7 +56,7 @@ export class TodoService implements ITodoService {
     input: GetTodoByIdInput
   ): Promise<GetTodoByIdOutput> {
     const result = await this.documentClient.get({
-      TableName: TABLE_NAME_TODO,
+      TableName: TABLE_NAME_MAIN,
       Key: {
         id: input.id,
       },
@@ -53,17 +66,17 @@ export class TodoService implements ITodoService {
       throw Error("Item not found");
     }
 
-    return result.Item as DDBTodo;
+    return this.removeRecordType(result.Item as DDBTodo);
   }
 
   public async createTodo(input: CreateTodoInput): Promise<CreateTodoOutput> {
     const item = this.translate(input);
 
     await this.documentClient.put({
-      TableName: TABLE_NAME_TODO,
+      TableName: TABLE_NAME_MAIN,
       Item: item,
     });
 
-    return item as DDBTodo;
+    return this.removeRecordType(item);
   }
 }

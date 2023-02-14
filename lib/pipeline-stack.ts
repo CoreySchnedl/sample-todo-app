@@ -208,7 +208,7 @@ export class PipelineStack extends Stack {
             },
             build: {
               commands: [
-                "npm run deploy-backend --outputs-file backendRestAPIExports.json --require-approval=never --verbose",
+                "npm run deploy-backend-rest-api --outputs-file backendRestAPIExports.json --require-approval=never --verbose",
               ],
             },
           },
@@ -219,7 +219,7 @@ export class PipelineStack extends Stack {
       }
     );
     const backendRestAPIExports = new CodePipeline.Artifact(
-      "DevBackendExports"
+      "DevBackendRestAPIExports"
     );
     deployStage.addAction(
       new CodePipelineActions.CodeBuildAction({
@@ -266,7 +266,7 @@ export class PipelineStack extends Stack {
                 "cd frontend-web-ui/typesafe-react-app",
                 "npm run build",
                 "cd ../..",
-                "npm run deploy-frontend --verbose",
+                "npm run deploy-frontend-web-ui --verbose",
               ],
             },
           },

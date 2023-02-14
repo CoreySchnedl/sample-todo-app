@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { FromSchema } from "json-schema-to-ts";
-import { DDBTodo } from "../../models/DDBModels";
+import { DDBTodo, DDBTodoWithoutRecordType } from "../../models/DDBModels";
 import * as schemas from "./schemas";
 
 export type TodoEventHandlerEventOutput = APIGatewayProxyResult;
@@ -16,20 +16,20 @@ export type TodoEventHandlerEventInput = Omit<
 export type CreateTodoEventRequestBody = FromSchema<
   typeof schemas.createTodoRequestBodySchema
 >;
-export type CreateTodoEventResponseBody = DDBTodo;
+export type CreateTodoEventResponseBody = DDBTodoWithoutRecordType;
 
 export type GetTodoEventRequestPathParameters = FromSchema<
   typeof schemas.getTodoRequestPathParameters
 >;
-export type GetTodoEventResponseBody = DDBTodo;
+export type GetTodoEventResponseBody = DDBTodoWithoutRecordType;
 
 export type GetTodoByIdInput = {
   id: string;
 };
-export type GetTodoByIdOutput = DDBTodo;
+export type GetTodoByIdOutput = DDBTodoWithoutRecordType;
 
 export type CreateTodoInput = Omit<DDBTodo, "id">;
-export type CreateTodoOutput = DDBTodo;
+export type CreateTodoOutput = DDBTodoWithoutRecordType;
 
 export interface ITodoService {
   getTodoById(input: GetTodoByIdInput): Promise<GetTodoByIdOutput>;
