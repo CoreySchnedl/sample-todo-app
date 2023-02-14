@@ -191,7 +191,7 @@ export class PipelineStack extends Stack {
 
     const backendProject = new CodeBuild.PipelineProject(
       this,
-      "DevBackendRestAPIProject",
+      "DeployDevBackendRestAPIProject",
       {
         encryptionKey,
         environment: {
@@ -207,9 +207,7 @@ export class PipelineStack extends Stack {
               commands: ["ls", "npm install"],
             },
             build: {
-              commands: [
-                "npm run deploy-backend-rest-api --outputs-file backendRestAPIExports.json --require-approval=never --verbose",
-              ],
+              commands: ["npm run deploy-backend-rest-api"],
             },
           },
           artifacts: {
@@ -224,7 +222,7 @@ export class PipelineStack extends Stack {
     deployStage.addAction(
       new CodePipelineActions.CodeBuildAction({
         runOrder: 1,
-        actionName: "DevBackendRestAPIDeployment",
+        actionName: "DeployDevBackendRestAPIStack",
         input: sourceArtifact,
         project: backendProject,
         outputs: [backendRestAPIExports],
@@ -238,7 +236,7 @@ export class PipelineStack extends Stack {
 
     const frontendWebUIProject = new CodeBuild.PipelineProject(
       this,
-      "DevFrontendWebUIProject",
+      "DeployDevFrontendWebUIProject",
       {
         encryptionKey,
         environment: {
@@ -266,7 +264,7 @@ export class PipelineStack extends Stack {
                 "cd frontend-web-ui/typesafe-react-app",
                 "npm run build",
                 "cd ../..",
-                "npm run deploy-frontend-web-ui --verbose",
+                "npm run deploy-frontend-web-ui",
               ],
             },
           },
@@ -277,7 +275,7 @@ export class PipelineStack extends Stack {
     deployStage.addAction(
       new CodePipelineActions.CodeBuildAction({
         runOrder: 2,
-        actionName: `DevDeployFrontendWebUI`,
+        actionName: `DeployDevFrontendWebUIStack`,
         input: sourceArtifact,
         extraInputs: [backendRestAPIExports],
         project: frontendWebUIProject,

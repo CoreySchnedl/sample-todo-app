@@ -11,8 +11,8 @@
     "cdk": "cdk",
     "synth-backend-rest-api": "npx cdk -a \"npx ts-node --prefer-ts-exts bin/backend-rest-api-app.ts\" synth --all",
     "synth-frontend-web-ui": "npx cdk -a \"npx ts-node --prefer-ts-exts bin/frontend-web-ui-app.ts\" synth --all",
-    "deploy-backend-rest-api": "npx cdk -a \"npx ts-node --prefer-ts-exts bin/backend-rest-api-app.ts\" deploy --all",
-    "deploy-frontend-web-ui": "npx cdk -a \"npx ts-node --prefer-ts-exts bin/frontend-web-ui-app.ts\" deploy --all"
+    "deploy-backend-rest-api": "npx cdk -a \"npx ts-node --prefer-ts-exts bin/backend-rest-api-app.ts\" deploy --all --outputs-file backendRestAPIExports.json --require-approval=never --verbose",
+    "deploy-frontend-web-ui": "npx cdk -a \"npx ts-node --prefer-ts-exts bin/frontend-web-ui-app.ts\" deploy --all --require-approval=never --verbose"
   },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.267.0",

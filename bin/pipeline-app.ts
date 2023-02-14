@@ -69,7 +69,7 @@ cdknag.NagSuppressions.addResourceSuppressionsByPath(
 
 cdknag.NagSuppressions.addResourceSuppressionsByPath(
   pipelineStack,
-  "/PipelineStack/DevBackendRestAPIProject/Role/DefaultPolicy/Resource",
+  "/PipelineStack/DeployDevBackendRestAPIProject/Role/DefaultPolicy/Resource",
   [
     {
       id: "AwsSolutions-IAM5",
@@ -80,7 +80,7 @@ cdknag.NagSuppressions.addResourceSuppressionsByPath(
 
 cdknag.NagSuppressions.addResourceSuppressionsByPath(
   pipelineStack,
-  "/PipelineStack/DevFrontendWebUIProject/Role/DefaultPolicy/Resource",
+  "/PipelineStack/DeployDevFrontendWebUIProject/Role/DefaultPolicy/Resource",
   [
     {
       id: "AwsSolutions-IAM5",
