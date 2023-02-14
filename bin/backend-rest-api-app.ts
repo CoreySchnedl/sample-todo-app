@@ -69,11 +69,37 @@ cdknag.NagSuppressions.addResourceSuppressionsByPath(
 
 cdknag.NagSuppressions.addResourceSuppressionsByPath(
   backendRestAPIStack,
+  "/BackendRestAPIStack/BackendRestApi/Default/v1/todos/{id}/OPTIONS/Resource",
+  [
+    {
+      id: "AwsSolutions-APIG4",
+      reason: "OPTIONS resources should not required authorization.",
+    },
+    {
+      id: "AwsSolutions-COG4",
+      reason: "OPTIONS resources should not required authorization.",
+    },
+  ]
+);
+
+cdknag.NagSuppressions.addResourceSuppressionsByPath(
+  backendRestAPIStack,
   "/BackendRestAPIStack/TodosLambdaExecutionRole/DefaultPolicy/Resource",
   [
     {
       id: "AwsSolutions-IAM5",
       reason: "Lambda Permissions are least priveledge and required to log.",
+    },
+  ]
+);
+
+cdknag.NagSuppressions.addResourceSuppressionsByPath(
+  backendRestAPIStack,
+  "/BackendRestAPIStack/BackendRestApi/CloudWatchRole/Resource",
+  [
+    {
+      id: "AwsSolutions-IAM4",
+      reason: "Resolve before using in a production codebase.",
     },
   ]
 );
