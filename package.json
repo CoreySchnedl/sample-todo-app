@@ -1,0 +1,45 @@
+{
+  "name": "end-to-end-cdk-type-safety",
+  "version": "0.1.0",
+  "bin": {
+    "end-to-end-cdk-type-safety": "bin/end-to-end-cdk-type-safety.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.267.0",
+    "@aws-sdk/lib-dynamodb": "^3.267.0",
+    "@aws-sdk/types": "^3.267.0",
+    "@types/aws-lambda": "^8.10.110",
+    "@types/jest": "^29.4.0",
+    "@types/node": "^18.11.18",
+    "@types/source-map-support": "^0.5.6",
+    "aws-cdk": "2.64.0",
+    "jest": "^29.4.1",
+    "ts-jest": "^29.0.5",
+    "ts-node": "^10.9.1",
+    "typescript": "~4.9.5"
+  },
+  "dependencies": {
+    "@aws-lambda-powertools/logger": "^1.5.1",
+    "@aws-lambda-powertools/tracer": "^1.5.1",
+    "@middy/core": "^4.2.4",
+    "@middy/http-error-handler": "^4.2.4",
+    "@middy/http-event-normalizer": "^4.2.4",
+    "@middy/http-json-body-parser": "^4.2.4",
+    "@middy/http-router": "^4.2.4",
+    "@middy/validator": "^4.2.4",
+    "aws-cdk-lib": "2.64.0",
+    "aws-lambda": "^1.0.7",
+    "cdk-nag": "^2.22.5",
+    "constructs": "^10.0.0",
+    "json-schema-to-ts": "^2.6.2",
+    "source-map-support": "^0.5.21",
+    "type-fest": "^3.5.7",
+    "uuidv4": "^6.2.13"
+  }
+}
