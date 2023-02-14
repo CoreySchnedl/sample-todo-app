@@ -273,7 +273,7 @@ export class PipelineStack extends Stack {
             },
             build: {
               commands: [
-                'export ASSET=$"CODEBUILD_SRC_DIR_$ENV_NAME"BackendExports',
+                'export ASSET=$"CODEBUILD_SRC_DIR_DevBackendRestAPIExports',
                 "export RESOLVED_ASSET_DIR=$(eval echo $ASSET)",
                 "cp $RESOLVED_ASSET_DIR/backendRestAPIExports.json frontend-web-ui/typesafe-react-app/src",
                 "cd frontend-web-ui/typesafe-react-app",
