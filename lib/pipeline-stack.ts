@@ -1,11 +1,12 @@
 import { Aws, Stack, StackProps } from "aws-cdk-lib";
+import * as CodeBuild from "aws-cdk-lib/aws-codebuild";
 import * as CodeCommit from "aws-cdk-lib/aws-codecommit";
 import * as CodePipeline from "aws-cdk-lib/aws-codepipeline";
 import * as CodePipelineActions from "aws-cdk-lib/aws-codepipeline-actions";
-import * as CodeBuild from "aws-cdk-lib/aws-codebuild";
-import { Construct } from "constructs";
 import * as IAM from "aws-cdk-lib/aws-iam";
+import * as KMS from "aws-cdk-lib/aws-kms";
 import * as S3 from "aws-cdk-lib/aws-s3";
+import { Construct } from "constructs";
 
 export interface PipelineStackProps extends StackProps {
   codeCommitRepoName: string;
@@ -16,9 +17,29 @@ export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props: PipelineStackProps) {
     super(scope, id, props);
 
+    const accessLogsBucket = new S3.Bucket(this, "AccessLogsBucket", {
+      blockPublicAccess: S3.BlockPublicAccess.BLOCK_ALL,
+      encryption: S3.BucketEncryption.S3_MANAGED,
+      enforceSSL: true,
+    });
+
+    const encryptionKey = new KMS.Key(this, "EncryptionKey", {
+      enableKeyRotation: true,
+    });
+
+    const artifactBucket = new S3.Bucket(this, "ArtifactsBucket", {
+      blockPublicAccess: S3.BlockPublicAccess.BLOCK_ALL,
+      encryption: S3.BucketEncryption.S3_MANAGED,
+      enforceSSL: true,
+      serverAccessLogsBucket: accessLogsBucket,
+    });
+
     const pipeline = new CodePipeline.Pipeline(
       this,
-      "end-to-end-type-safe-cdk-application-pipeline"
+      "end-to-end-type-safe-cdk-application-pipeline",
+      {
+        artifactBucket,
+      }
     );
     const sourceStage = pipeline.addStage({ stageName: "Source" });
 
@@ -47,6 +68,7 @@ export class PipelineStack extends Stack {
       this,
       `TestingProject`,
       {
+        encryptionKey,
         environment: {
           buildImage: CodeBuild.LinuxBuildImage.STANDARD_6_0,
           environmentVariables: {
@@ -60,7 +82,7 @@ export class PipelineStack extends Stack {
           phases: {
             install: {
               "runtime-versions": {
-                nodejs: "18",
+                nodejs: "16",
               },
               commands: ["ls", "npm install"],
             },
@@ -87,12 +109,14 @@ export class PipelineStack extends Stack {
       blockPublicAccess: S3.BlockPublicAccess.BLOCK_ALL,
       encryption: S3.BucketEncryption.S3_MANAGED,
       enforceSSL: true,
+      serverAccessLogsBucket: accessLogsBucket,
     });
     const scanningStage = pipeline.addStage({ stageName: "Scanning" });
     const scanningProject = new CodeBuild.PipelineProject(
       this,
       "ScanningProject",
       {
+        encryptionKey,
         environment: {
           privileged: true,
           buildImage: CodeBuild.LinuxBuildImage.AMAZON_LINUX_2_3,
@@ -169,6 +193,7 @@ export class PipelineStack extends Stack {
       this,
       "DevBackendRestAPIProject",
       {
+        encryptionKey,
         environment: {
           buildImage: CodeBuild.LinuxBuildImage.STANDARD_6_0,
         },
@@ -177,7 +202,7 @@ export class PipelineStack extends Stack {
           phases: {
             install: {
               "runtime-versions": {
-                nodejs: "18",
+                nodejs: "16",
               },
               commands: ["ls", "npm install"],
             },
@@ -215,6 +240,7 @@ export class PipelineStack extends Stack {
       this,
       "DevFrontendWebUIProject",
       {
+        encryptionKey,
         environment: {
           buildImage: CodeBuild.LinuxBuildImage.STANDARD_6_0,
         },
@@ -223,7 +249,7 @@ export class PipelineStack extends Stack {
           phases: {
             install: {
               "runtime-versions": {
-                nodejs: "18",
+                nodejs: "16",
               },
               commands: [
                 "npm install",
