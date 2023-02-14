@@ -30,7 +30,9 @@ export class TodoService implements ITodoService {
     this.documentClient = input.documentClient;
   }
 
-  private translate(record: SetOptional<DDBTodo, "id">): DDBTodo {
+  private translate(
+    record: SetOptional<DDBTodo, "id" | "recordType">
+  ): DDBTodo {
     const id = record.id || this.generateId();
 
     return {

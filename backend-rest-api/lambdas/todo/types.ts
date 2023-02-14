@@ -28,7 +28,7 @@ export type GetTodoByIdInput = {
 };
 export type GetTodoByIdOutput = DDBTodoWithoutRecordType;
 
-export type CreateTodoInput = Omit<DDBTodo, "id">;
+export type CreateTodoInput = Omit<DDBTodo, "id" | "recordType">;
 export type CreateTodoOutput = DDBTodoWithoutRecordType;
 
 export interface ITodoService {
