@@ -4,6 +4,7 @@ import {
   Stack,
   StackProps,
   CfnOutput,
+  Aws,
 } from "aws-cdk-lib";
 import * as ApiGateway from "aws-cdk-lib/aws-apigateway";
 import * as Cognito from "aws-cdk-lib/aws-cognito";
@@ -12,6 +13,7 @@ import * as IAM from "aws-cdk-lib/aws-iam";
 import * as Lambda from "aws-cdk-lib/aws-lambda";
 import * as Logs from "aws-cdk-lib/aws-logs";
 import * as LambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
+import * as WAFv2 from "aws-cdk-lib/aws-wafv2";
 import { Construct } from "constructs";
 import * as path from "path";
 
@@ -64,7 +66,73 @@ export class BackendRestAPIStack extends Stack {
 
     const logGroup = new Logs.LogGroup(this, "ApiGatewayAccessLogs");
 
+    const webAcl = new WAFv2.CfnWebACL(this, "WebAcl", {
+      defaultAction: {
+        allow: {},
+      },
+      scope: "REGIONAL",
+      visibilityConfig: {
+        cloudWatchMetricsEnabled: true,
+        metricName: "webACL",
+        sampledRequestsEnabled: true,
+      },
+      rules: [
+        {
+          name: "AWS-AWSManagedRulesCommonRuleSet",
+          priority: 1,
+          overrideAction: { none: {} },
+          statement: {
+            managedRuleGroupStatement: {
+              name: "AWSManagedRulesCommonRuleSet",
+              vendorName: "AWS",
+              excludedRules: [{ name: "SizeRestrictions_BODY" }],
+            },
+          },
+          visibilityConfig: {
+            cloudWatchMetricsEnabled: true,
+            metricName: "awsCommonRules",
+            sampledRequestsEnabled: true,
+          },
+        },
+        {
+          name: "awsAnonymousIP",
+          priority: 2,
+          overrideAction: { none: {} },
+          statement: {
+            managedRuleGroupStatement: {
+              name: "AWSManagedRulesAnonymousIpList",
+              vendorName: "AWS",
+              excludedRules: [],
+            },
+          },
+          visibilityConfig: {
+            cloudWatchMetricsEnabled: true,
+            metricName: "awsAnonymous",
+            sampledRequestsEnabled: true,
+          },
+        },
+        {
+          name: "awsIPReputation",
+          priority: 3,
+          overrideAction: { none: {} },
+          statement: {
+            managedRuleGroupStatement: {
+              name: "AWSManagedRulesAmazonIpReputationList",
+              vendorName: "AWS",
+              excludedRules: [],
+            },
+          },
+          visibilityConfig: {
+            cloudWatchMetricsEnabled: true,
+            metricName: "awsReputation",
+            sampledRequestsEnabled: true,
+          },
+        },
+      ],
+    });
+
     const restAPI = new ApiGateway.RestApi(this, "BackendRestApi", {
+      endpointTypes: [ApiGateway.EndpointType.REGIONAL],
       deployOptions: {
         tracingEnabled: true,
         loggingLevel: ApiGateway.MethodLoggingLevel.INFO,
@@ -76,6 +144,11 @@ export class BackendRestAPIStack extends Stack {
         allowMethods: ApiGateway.Cors.ALL_METHODS,
         allowHeaders: ApiGateway.Cors.DEFAULT_HEADERS,
       },
+    });
+
+    new WAFv2.CfnWebACLAssociation(this, "WebACLAssociation", {
+      webAclArn: webAcl.attrArn,
+      resourceArn: `arn:aws:apigateway:${Aws.REGION}::/restapis/${restAPI.restApiId}/stages/${restAPI.deploymentStage.stageName}`,
     });
 
     const cognitoAuthorizer = new ApiGateway.CognitoUserPoolsAuthorizer(
