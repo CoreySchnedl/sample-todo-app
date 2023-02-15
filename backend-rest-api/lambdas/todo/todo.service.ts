@@ -1,11 +1,12 @@
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
+import { TodoPriority } from "@shared/enums";
 import { SetOptional } from "type-fest";
+import { uuid } from "uuidv4";
 import {
   DDBRecordType,
   DDBTodo,
   DDBTodoWithoutRecordType,
 } from "../../models/DDBModels";
-import { uuid } from "uuidv4";
 import {
   CreateTodoInput,
   CreateTodoOutput,
@@ -13,7 +14,6 @@ import {
   GetTodoByIdOutput,
   ITodoService,
 } from "./types";
-import { TodoPriority } from "@shared/enums";
 
 const TABLE_NAME_MAIN = process.env.TABLE_NAME_MAIN!;
 

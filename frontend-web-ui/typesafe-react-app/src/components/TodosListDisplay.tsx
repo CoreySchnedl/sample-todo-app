@@ -1,27 +1,20 @@
-import { Grid, List, ListItem, ListItemText, Typography } from "@mui/material";
+import { Grid, List, ListItem, ListItemText } from "@mui/material";
 import React from "react";
-
-const generate = (element: React.ReactElement) => {
-  return [0, 1, 2].map((value) =>
-    React.cloneElement(element, {
-      key: value,
-    })
-  );
-};
+import { useSelector } from "react-redux";
+import { TodosSelector } from "../app/features/todos/TodosSlice";
 
 export const TodosListDisplay: React.FC<{}> = () => {
+  const todoList = useSelector(TodosSelector.getTodos);
+
   return (
-    <Grid container justifyContent="center" maxWidth="400px">
-      <Grid item xs={12}>
-        <Typography variant="h4">Todo List</Typography>
-      </Grid>
+    <Grid container justifyContent="center">
       <Grid item xs={12}>
         <List>
-          {generate(
-            <ListItem>
-              <ListItemText primary="some text here"></ListItemText>
+          {todoList.map((todo) => (
+            <ListItem key={todo.id}>
+              <ListItemText>{todo.name}</ListItemText>
             </ListItem>
-          )}
+          ))}
         </List>
       </Grid>
     </Grid>
