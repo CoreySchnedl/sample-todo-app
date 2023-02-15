@@ -11,7 +11,7 @@ const generate = (element: React.ReactElement) => {
 
 export const TodosListDisplay: React.FC<{}> = () => {
   return (
-    <Grid container justifyContent="center" xs={12} maxWidth="400px">
+    <Grid container justifyContent="center" maxWidth="400px">
       <Grid item xs={12}>
         <Typography variant="h4">Todo List</Typography>
       </Grid>

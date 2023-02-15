@@ -1,4 +1,4 @@
-import { TodoPriority } from "../../shared";
+import { TodoPriority } from "@shared/enums";
 
 export enum DDBRecordType {
   TODO = "TODO",

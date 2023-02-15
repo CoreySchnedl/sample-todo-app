@@ -1,7 +1,7 @@
 import middy from "@middy/core";
 import { Method, Route } from "@middy/http-router";
 import validator from "@middy/validator";
-import { TodosAPIServiceContracts } from "@shared/services";
+import { TodosAPIServiceContracts } from "@shared/types";
 import { withHttpMiddleware } from "../../utils/middy";
 import { statusOk } from "../../utils/response";
 import { NormalizedEventHandler } from "../../utils/types";

@@ -25,9 +25,10 @@
   },
   "exclude": ["node_modules", "cdk.out"],
   "include": [
-    "./backend-rest-api",
-    "./frontend-web-ui/src",
     "./shared",
+    "./backend-rest-api",
+    "./frontend-web-ui/web-app/src",
+    "./queue",
     "./bin",
     "./lib",
     "./types"

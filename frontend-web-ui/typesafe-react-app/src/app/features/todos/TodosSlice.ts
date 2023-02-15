@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TodosAPIServiceContracts } from "@shared/services/todo";
+import { TodosAPIServiceContracts } from "@shared/types";
 import { RootState } from "../../store/Store";
 
 export type Todo = TodosAPIServiceContracts.GetTodoResponse;

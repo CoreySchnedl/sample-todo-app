@@ -1,4 +1,4 @@
-import { TodoPriority } from "../../../shared";
+import { TodoPriority } from "@shared/enums";
 import { createRequestSchema } from "../../utils/schema";
 
 export const createTodoRequestBodySchema = {
