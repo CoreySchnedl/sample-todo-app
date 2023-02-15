@@ -22,7 +22,9 @@ cdknag.NagSuppressions.addResourceSuppressionsByPath(
   ]
 );
 
-// NOTE: resolve the below cdknag reported issues before implementing in any production codebase.
+/**
+ * NOTE: resolve the below cdknag reported issues before implementing in any production codebase.
+ */
 cdknag.NagSuppressions.addResourceSuppressionsByPath(
   pipelineStack,
   "/PipelineStack/end-to-end-type-safe-cdk-application-pipeline/Role/DefaultPolicy/Resource",
