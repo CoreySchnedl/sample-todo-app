@@ -58,3 +58,11 @@ cdknag.NagSuppressions.addStackSuppressions(frontEndWebUIStack, [
       "This module uses IAM Roles / Policies created via CDK. Some of these policies and roles may be over-permissive for production use-cases. Review these policies and roles before implementing in a production-codebase.",
   },
 ]);
+
+cdknag.NagSuppressions.addStackSuppressions(frontEndWebUIStack, [
+  {
+    id: "AwsSolutions-IAM5",
+    reason:
+      "This module uses IAM Roles / Policies created via CDK. Some of these policies and roles may be over-permissive for production use-cases. Review these policies and roles before implementing in a production-codebase.",
+  },
+]);
