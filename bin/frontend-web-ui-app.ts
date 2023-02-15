@@ -51,14 +51,10 @@ cdknag.NagSuppressions.addResourceSuppressionsByPath(
  * NOTE: resolve the below cdknag reported issues before implementing in any production codebase.
  */
 
-cdknag.NagSuppressions.addResourceSuppressionsByPath(
-  frontEndWebUIStack,
-  "/FrontendWebUIStack/*",
-  [
-    {
-      id: "AwsSolutions-IAM4",
-      reason:
-        "This module uses IAM Roles / Policies created via CDK. Some of these policies and roles may be over-permissive for production use-cases. Review these policies and roles before implementing in a production-codebase.",
-    },
-  ]
-);
+cdknag.NagSuppressions.addStackSuppressions(frontEndWebUIStack, [
+  {
+    id: "AwsSolutions-IAM4",
+    reason:
+      "This module uses IAM Roles / Policies created via CDK. Some of these policies and roles may be over-permissive for production use-cases. Review these policies and roles before implementing in a production-codebase.",
+  },
+]);
