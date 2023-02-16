@@ -1,13 +1,15 @@
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 import middy from "@middy/core";
 import { Method, Route } from "@middy/http-router";
 import validator from "@middy/validator";
+import { transpileSchema } from "@middy/validator/transpile";
 import { TodosAPIServiceContracts } from "@shared/types";
 import { withHttpMiddleware } from "../../utils/middy";
 import { statusOk, statusOkNoContent } from "../../utils/response";
 import { NormalizedEventHandler } from "../../utils/types";
-import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
-import { transpileSchema } from "@middy/validator/transpile";
 import * as schemas from "./schemas";
+import { TodoService } from "./todo.service";
 import {
   DeleteTodoEventRequestPathParameters,
   GetTodoEventRequestPathParameters,
@@ -15,8 +17,6 @@ import {
   TodoEventHandlerEventInput,
   UpdateTodoEventRequestPathParameters,
 } from "./types";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { TodoService } from "./todo.service";
 
 const documentClient = DynamoDBDocument.from(new DynamoDBClient({}), {
   marshallOptions: {

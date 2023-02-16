@@ -12,7 +12,7 @@
     "synth-backend-rest-api": "npx cdk -a \"npx ts-node -r tsconfig-paths/register --prefer-ts-exts bin/backend-rest-api-app.ts\" synth --all",
     "synth-frontend-web-ui": "npx cdk -a \"npx ts-node -r tsconfig-paths/register --prefer-ts-exts bin/frontend-web-ui-app.ts\" synth --all",
     "deploy-pipeline": "npx cdk -a \"npx ts-node -r tsconfig-paths/register --prefer-ts-exts bin/pipeline-app.ts\" deploy --all",
-    "deploy-backend-rest-api": "npx cdk -a \"npx ts-node -r tsconfig-paths/register --prefer-ts-exts bin/backend-rest-api-app.ts\" deploy --all",
+    "deploy-backend-rest-api": "npx cdk -a \"npx ts-node -r tsconfig-paths/register --prefer-ts-exts bin/backend-rest-api-app.ts\" deploy --all --outputs-file backendRestAPIExports.json --require-approval=never --verbose",
     "deploy-frontend-web-ui": "npx cdk -a \"npx ts-node -r tsconfig-paths/register --prefer-ts-exts bin/frontend-web-ui-app.ts\" deploy --all --require-approval=never --verbose"
   },
   "devDependencies": {
