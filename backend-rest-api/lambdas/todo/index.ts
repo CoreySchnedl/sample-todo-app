@@ -91,8 +91,6 @@ const deleteTodoHandler: NormalizedEventHandler<
 };
 
 const getTodosListHandler: NormalizedEventHandler<void> = async (event) => {
-  console.log("hi");
-
   const { sub } = event.requestContext.authorizer?.claims || "";
 
   const result = await todoService.getTodosBySub({ sub });
