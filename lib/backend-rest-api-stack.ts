@@ -1,18 +1,21 @@
+import { GSI_SUB_RECORDTYPE } from "@shared/constants";
 import {
+  Aws,
+  CfnOutput,
   Duration,
   RemovalPolicy,
   Stack,
   StackProps,
-  CfnOutput,
-  Aws,
 } from "aws-cdk-lib";
 import * as ApiGateway from "aws-cdk-lib/aws-apigateway";
 import * as Cognito from "aws-cdk-lib/aws-cognito";
 import * as DynamodDB from "aws-cdk-lib/aws-dynamodb";
+import { AttributeType } from "aws-cdk-lib/aws-dynamodb";
 import * as IAM from "aws-cdk-lib/aws-iam";
 import * as Lambda from "aws-cdk-lib/aws-lambda";
-import * as Logs from "aws-cdk-lib/aws-logs";
 import * as LambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
+import { LogLevel } from "aws-cdk-lib/aws-lambda-nodejs";
+import * as Logs from "aws-cdk-lib/aws-logs";
 import * as WAFv2 from "aws-cdk-lib/aws-wafv2";
 import { Construct } from "constructs";
 import * as path from "path";
@@ -62,6 +65,18 @@ export class BackendRestAPIStack extends Stack {
       removalPolicy: RemovalPolicy.RETAIN,
       timeToLiveAttribute: "ttl",
       pointInTimeRecovery: true,
+    });
+
+    mainTable.addGlobalSecondaryIndex({
+      indexName: GSI_SUB_RECORDTYPE.name,
+      partitionKey: {
+        name: GSI_SUB_RECORDTYPE.primaryKey.name,
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: GSI_SUB_RECORDTYPE.sortKey.name,
+        type: AttributeType.STRING,
+      },
     });
 
     const logGroup = new Logs.LogGroup(this, "ApiGatewayAccessLogs");
@@ -219,7 +234,7 @@ export class BackendRestAPIStack extends Stack {
         },
         bundling: {
           minify: true,
-          externalModules: ["@aws-sdk/*"],
+          logLevel: LogLevel.INFO,
         },
       }
     );

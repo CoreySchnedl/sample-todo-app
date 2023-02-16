@@ -1,18 +1,25 @@
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
+import { GSI_SUB_RECORDTYPE } from "@shared/constants";
 import { TodoPriority } from "@shared/enums";
 import { SetOptional } from "type-fest";
 import { v4 as uuidv4 } from "uuid";
 import {
   DDBRecordType,
   DDBTodo,
-  DDBTodoWithoutRecordType,
-} from "../../models/DDBModels";
+  DDBTodoWithoutRecordTypeOrSub,
+} from "../../models/ddbmodels";
+import { generateUpdateExpression } from "../../utils/dynamodb";
 import {
   CreateTodoInput,
   CreateTodoOutput,
+  DeleteTodoInput,
   GetTodoByIdInput,
   GetTodoByIdOutput,
+  GetTodosBySubInput,
+  GetTodosBySubOutput,
   ITodoService,
+  UpdateTodoInput,
+  UpdateTodoOutput,
 } from "./types";
 
 const TABLE_NAME_MAIN = process.env.TABLE_NAME_MAIN!;
@@ -38,14 +45,15 @@ export class TodoService implements ITodoService {
     return {
       id,
       recordType: TodoService.RECORD_TYPE,
-      name: record.name || "",
+      sub: record.sub,
+      name: record.name,
       description: record.description || "",
       priority: record.priority || TodoPriority.LOW,
     };
   }
 
-  private removeRecordType(item: DDBTodo): DDBTodoWithoutRecordType {
-    const { recordType, ...result } = item;
+  private removeRecordTypeAndSub(item: DDBTodo): DDBTodoWithoutRecordTypeOrSub {
+    const { recordType, sub, ...result } = item;
 
     return result;
   }
@@ -68,7 +76,7 @@ export class TodoService implements ITodoService {
       throw Error("Item not found");
     }
 
-    return this.removeRecordType(result.Item as DDBTodo);
+    return this.removeRecordTypeAndSub(result.Item as DDBTodo);
   }
 
   public async createTodo(input: CreateTodoInput): Promise<CreateTodoOutput> {
@@ -79,6 +87,59 @@ export class TodoService implements ITodoService {
       Item: item,
     });
 
-    return this.removeRecordType(item);
+    return this.removeRecordTypeAndSub(item);
+  }
+
+  public async updateTodo(input: UpdateTodoInput): Promise<UpdateTodoOutput> {
+    const item = this.translate(input);
+
+    const { id, recordType, ...attributesToUpdate } = item;
+
+    await this.documentClient.update({
+      TableName: TABLE_NAME_MAIN,
+      Key: {
+        id,
+        recordType,
+      },
+      ...generateUpdateExpression(attributesToUpdate),
+    });
+
+    return this.removeRecordTypeAndSub(item);
+  }
+
+  public async deleteTodo(input: DeleteTodoInput): Promise<boolean> {
+    await this.documentClient.delete({
+      TableName: TABLE_NAME_MAIN,
+      Key: {
+        id: input.id,
+        recordType: TodoService.RECORD_TYPE,
+      },
+    });
+
+    return true;
+  }
+
+  public async getTodosBySub(
+    input: GetTodosBySubInput
+  ): Promise<GetTodosBySubOutput> {
+    const results = await this.documentClient.query({
+      TableName: TABLE_NAME_MAIN,
+      IndexName: GSI_SUB_RECORDTYPE.name,
+      KeyConditionExpression: "#sub = :sub and #recordType = :recordType",
+      ExpressionAttributeNames: {
+        "#sub": "sub",
+        "#recordType": "recordType",
+      },
+      ExpressionAttributeValues: {
+        ":sub": input.sub,
+        ":recordType": TodoService.RECORD_TYPE,
+      },
+    });
+
+    const mappedResults: GetTodosBySubOutput = (results.Items || []).map(
+      (item) => this.removeRecordTypeAndSub(item as DDBTodo)
+    );
+
+    return mappedResults;
   }
 }

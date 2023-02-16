@@ -2,8 +2,8 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import { Amplify, Auth } from "aws-amplify";
 import "./App.css";
-import { Router } from "./Router";
 import backendRestAPIExports from "./backendRestAPIExports.json";
+import { Router } from "./Router";
 
 export const API_NAME_BACKEND_REST_API = "API_NAME_BACKEND_REST_API";
 

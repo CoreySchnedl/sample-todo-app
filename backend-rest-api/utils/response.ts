@@ -7,6 +7,14 @@ const headers = {
   "Access-Control-Allow-Methods": "*",
 };
 
+export function statusOkNoContent(): APIGatewayProxyResult {
+  return {
+    statusCode: 200,
+    body: "",
+    headers,
+  };
+}
+
 export function statusOk<T>(response: T): APIGatewayProxyResult {
   return {
     statusCode: 200,
