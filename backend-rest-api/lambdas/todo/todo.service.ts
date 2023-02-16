@@ -1,7 +1,7 @@
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 import { TodoPriority } from "@shared/enums";
 import { SetOptional } from "type-fest";
-import { uuid } from "uuidv4";
+import { v4 as uuidv4 } from "uuid";
 import {
   DDBRecordType,
   DDBTodo,
@@ -51,7 +51,7 @@ export class TodoService implements ITodoService {
   }
 
   private generateId(): string {
-    return uuid();
+    return uuidv4();
   }
 
   public async getTodoById(
