@@ -1,17 +1,23 @@
 import { Card, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { TodosAction, TodosSelector } from "../app/features/todos/TodosSlice";
 import { useAppDispatch } from "../app/store/Store";
 import { TodoForm } from "../components/forms/TodoForm";
 import { TodosListDisplay } from "../components/TodosListDisplay";
+import { CountersAction } from "../app/features/counters/CountersSlice";
+import { ButtonClicksDisplay } from "../components/ButtonClicksDisplay";
 
 export const HomePage: React.FC<{}> = () => {
   const dispatch = useAppDispatch();
 
   const formMode = useSelector(TodosSelector.getFormMode);
   const selectedTodoId = useSelector(TodosSelector.getSelectedTodoId);
+
+  const handleButtonClick = () =>
+    dispatch(CountersAction.increaseButtonClicks());
 
   useEffect(() => {
     dispatch(TodosAction.getTodosList());
@@ -42,6 +48,14 @@ export const HomePage: React.FC<{}> = () => {
                 <TodosListDisplay />
               </Grid>
             </Grid>
+          </Grid>
+        </Grid>
+        <Grid container>
+          <Grid item>
+            <Button variant="text" onClick={handleButtonClick}>
+              Cool Button
+            </Button>
+            <ButtonClicksDisplay></ButtonClicksDisplay>
           </Grid>
         </Grid>
       </Card>
